@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -18,8 +18,12 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from '../environments/environment';
 import { AuthService } from './auth/auth.service';
 import { StoreModule } from '@ngrx/store';
+import { ChartsModule } from 'ng2-charts';
+
 import { appReducers } from './app.reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { IngresoEgresoService } from './ingreso-egreso/ingreso-egreso.service';
+import { OrderIngresoEgresoPipe } from './ingreso-egreso/order-ingreso-egreso.pipe';
 
 @NgModule({
   declarations: [
@@ -32,14 +36,18 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     DetailsComponent,
     FooterComponent,
     NavbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    OrderIngresoEgresoPipe
   ],
   imports: [
     BrowserModule,
+    ChartsModule,
     AppRoutingModule,
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
+    FormsModule,
+    ReactiveFormsModule,
     AngularFirestoreModule,
     StoreModule.forRoot(appReducers),
     StoreDevtoolsModule.instrument({
@@ -48,7 +56,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     })
 
   ],
-  providers: [AuthService],
+  providers: [AuthService, IngresoEgresoService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

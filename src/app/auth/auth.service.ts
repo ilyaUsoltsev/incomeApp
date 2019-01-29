@@ -9,8 +9,9 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.reducer';
 import { StartLoadingAction, StopLoadingAction } from '../shared/ui.actions';
-import { SetUserAction } from './auth.actions';
+import { SetUserAction, UnSetUserAction } from './auth.actions';
 import { Subscription } from 'rxjs';
+import { UnSetItemsAction } from '../ingreso-egreso/ingreso-egreso.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ import { Subscription } from 'rxjs';
 export class AuthService {
 
   private userSubscription: Subscription = new Subscription();
+  private currentUser: User;
 
   constructor(private afAuth: AngularFireAuth,
       private afDB: AngularFirestore,
@@ -31,8 +33,10 @@ export class AuthService {
           .subscribe( (userObj: any) => {
             const newUser = new User( userObj);
             this.store.dispatch(new SetUserAction(newUser));
+            this.currentUser = newUser;
           });
       } else {
+        this.currentUser = null;
         this.userSubscription.unsubscribe();
       }
     });
@@ -80,9 +84,11 @@ export class AuthService {
   logoutUser() {
     this.afAuth.auth.signOut().then(
       () => {
+        this.store.dispatch(new UnSetUserAction());
         this.router.navigate(['/login']);
       }
     );
+
 
   }
 
@@ -96,6 +102,10 @@ export class AuthService {
           return fbUser != null;
         })
     );
+  }
+
+  getCurrentUser() {
+    return {...this.currentUser};
   }
 
 }
